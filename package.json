@@ -1,0 +1,17 @@
+{
+  "name": "files_upload_project",
+  "version": "1.0.0",
+  "description": "learn to upload files using NODE server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "files",
+    "load",
+    "node",
+    "student"
+  ],
+  "author": "DIMANVAZ",
+  "license": "ISC"
+}
