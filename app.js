@@ -12,7 +12,8 @@ const server = http
         }
         //uploads+
         else if (/\/uploads\/[^\/]+$/.test(req.url) && req.method === 'POST'){
-            console.log('upload files')
+            saveUploadFile(req,res);
+            console.log('upload files');
         }
         //статика (папка static) - css, картинки, js
         //читаем запросы - они могут быть разные - выдаём ответ
@@ -57,6 +58,28 @@ function getContentType(url){
     }
 }
 
+//сохранение файла - РАЗОБРАТЬСЯ, ЧТО ОНА ДЕЛАЕТ ДЕТАЛЬНО
+function saveUploadFile(req,res){
+    let fileName = path.basename(req.url);
+    let file = path.join(__dirname, '/uploads/',fileName);
+    let imageFolder = path.join(__dirname,'/static/images',fileName)
 
-//сохранение файла
-
+    req.pipe(fs.createWriteStream(file)); //поток данных из пришедших в запросе -> в запись
+    req.on('end',()=>{
+        fs.copyFile(file, imageFolder, (err)=>{
+            if(err){
+                console.error('Error with copying file', err);
+            }
+            else {
+                fs.unlink(file, (err)=>{
+                    if(err){
+                        console.error('Error with deleting file', err);
+                    }
+                })
+            }
+        })
+        res.writeHead(200, {'Content-Type': 'text'});
+        res.write(fileName);
+        res.end()
+    })
+}
