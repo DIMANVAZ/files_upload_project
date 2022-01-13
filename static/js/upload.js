@@ -29,6 +29,7 @@ function callbackFunction(data){
     let iconImage = document.querySelector('.icon-image');
 
     // указываем ей источник - путь к новому файлу, сохранённому в images
+    // ИЗОБРАЖЕНИЯ ПРОГРУЗИТЬСЯ НЕ УСПЕВАЮТ !!!
     iconImage.src = "./images/"+data;
 
     // тут мы пишем имя файла в скрытое поле формы для дальнейших манипуляций
