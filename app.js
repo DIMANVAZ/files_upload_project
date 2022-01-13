@@ -12,7 +12,7 @@ const server = http
         }
         //uploads+
         else if (/\/uploads\/[^\/]+$/.test(req.url) && req.method === 'POST'){
-            console.log('upload files');
+            console.log(`Сработал upload files`);
             saveUploadFile(req,res);
         }
         //статика (папка static) - css, картинки, js
@@ -26,14 +26,16 @@ const server = http
     console.log('Server started at 3130')
 })
 
-//отправка ресурсов
+//отправка ресурсов - отправляет index.html, связанные стили, иконки
 function sendRes(url, contentType, res){
     let file = path.join(__dirname+'/static/',url); //полный путь к файлам в папке static
+    console.log('let file from function sendRes = ', file);//--------------------------------------------------
+
     fs.readFile(file,(err,content)=>{
         if(err){
             res.writeHead(404);
             res.end('File not found');
-            console.error(`Trouble with readFile:${file}`,err);
+            console.error(`Trouble with readFile:${file} in sendFile`,err);
         }
         else{
             res.writeHead(200,{'Content-Type':contentType});
@@ -61,21 +63,21 @@ function getContentType(url){
 //сохранение файла - РАЗОБРАТЬСЯ, ЧТО ОНА ДЕЛАЕТ ДЕТАЛЬНО
 function saveUploadFile(req,res){
     let fileName = path.basename(req.url);
-    let file = path.join(__dirname, '/uploads/',fileName);
-    let imageFolder = path.join(__dirname,'static/images',fileName);
+    let fileFullPath = path.join(__dirname, '/uploads/',fileName);
+    let fileInImagesFolder = path.join(__dirname,'static/images',fileName);
 
-    console.log(`fileName = ${fileName}\n file = ${file} \n imageFolder = ${imageFolder}`)
+    console.log(`fileName = ${fileName}\n file = ${fileFullPath} \n imageFolder = ${fileInImagesFolder}`)
 
-    req.pipe(fs.createWriteStream(file)); //поток данных из пришедших в запросе -> в запись
+    req.pipe(fs.createWriteStream(fileFullPath)); //поток данных из пришедших в запросе -> в запись
     req.on('end',()=>{
-        fs.copyFile(file, imageFolder, (err)=>{
-            console.log(`We write -${file}- from req.pipe`)
+        fs.copyFile(fileFullPath, fileInImagesFolder, (err)=>{
+            console.log(`We write -${fileFullPath}- from req.pipe`)
             if(err){
                 console.error('Error with copying file', err);
             }
             //else {
-            fs.unlink(file, (err)=>{
-                console.log(`we delete file ${file}`);
+            fs.unlink(fileFullPath, (err)=>{
+                console.log(`we delete file ${fileFullPath}`);
                 if(err){
                     console.error('Error with deleting file', err);
                 }
