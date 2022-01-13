@@ -31,19 +31,23 @@ function sendRes(url, contentType, res){
     let file = path.join(__dirname+'/static/',url); //полный путь к файлам в папке static
     console.log('let file from function sendRes = ', file);//--------------------------------------------------
 
-    fs.readFile(file,(err,content)=>{
-        if(err){
-            res.writeHead(404);
-            res.end('File not found');
-            console.error(`Trouble with readFile:${file} in sendFile`,err);
-        }
-        else{
-            res.writeHead(200,{'Content-Type':contentType});
-            res.write(content);
-            res.end();
-            console.log(`res 200:${file}`)
-        }
-    })
+    //КОСТЫЛЬ для асинхронности!!!
+    setTimeout(()=>{
+        fs.readFile(file,(err,content)=>{
+            if(err){
+                res.writeHead(404);
+                res.end('File not found');
+                console.error(`Trouble with readFile:${file} in sendFile`,err);
+            }
+            else{
+                res.writeHead(200,{'Content-Type':contentType});
+                res.write(content);
+                res.end();
+                console.log(`res 200:${file}`);
+            }
+        })
+    },100)
+
 
 }
 
