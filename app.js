@@ -12,8 +12,8 @@ const server = http
         }
         //uploads+
         else if (/\/uploads\/[^\/]+$/.test(req.url) && req.method === 'POST'){
-            saveUploadFile(req,res);
             console.log('upload files');
+            saveUploadFile(req,res);
         }
         //статика (папка static) - css, картинки, js
         //читаем запросы - они могут быть разные - выдаём ответ
@@ -28,12 +28,12 @@ const server = http
 
 //отправка ресурсов
 function sendRes(url, contentType, res){
-    let file = path.join(__dirname,'/static/',url); //полный путь к файлам в папке static
+    let file = path.join(__dirname+'/static/',url); //полный путь к файлам в папке static
     fs.readFile(file,(err,content)=>{
         if(err){
             res.writeHead(404);
             res.end('File not found');
-            console.error('Trouble with readFile:',err);
+            console.error(`Trouble with readFile:${file}`,err);
         }
         else{
             res.writeHead(200,{'Content-Type':contentType});
@@ -62,21 +62,25 @@ function getContentType(url){
 function saveUploadFile(req,res){
     let fileName = path.basename(req.url);
     let file = path.join(__dirname, '/uploads/',fileName);
-    let imageFolder = path.join(__dirname,'/static/images',fileName)
+    let imageFolder = path.join(__dirname,'static/images',fileName);
+
+    console.log(`fileName = ${fileName}\n file = ${file} \n imageFolder = ${imageFolder}`)
 
     req.pipe(fs.createWriteStream(file)); //поток данных из пришедших в запросе -> в запись
     req.on('end',()=>{
         fs.copyFile(file, imageFolder, (err)=>{
+            console.log(`We write -${file}- from req.pipe`)
             if(err){
                 console.error('Error with copying file', err);
             }
-            else {
-                fs.unlink(file, (err)=>{
-                    if(err){
-                        console.error('Error with deleting file', err);
-                    }
-                })
-            }
+            //else {
+            fs.unlink(file, (err)=>{
+                console.log(`we delete file ${file}`);
+                if(err){
+                    console.error('Error with deleting file', err);
+                }
+            })
+            //}
         })
         res.writeHead(200, {'Content-Type': 'text'});
         res.write(fileName);
