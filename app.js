@@ -43,7 +43,7 @@ const server = http
 //отправка ресурсов - отправляет index.html, связанные стили, иконки
 function sendRes(url, contentType, res){
     let file = path.join(__dirname+'/static/',url); //полный путь к файлам в папке static
-    console.log('let file from function sendRes = ', file);//--------------------------------------------------
+    //console.log('let file from function sendRes = ', file);//--------------------------------------------------
 
     //kludge for correct consequence of operation  КОСТЫЛЬ для асинхронности!!!
     setTimeout(()=>{
@@ -57,7 +57,7 @@ function sendRes(url, contentType, res){
                 res.writeHead(200,{'Content-Type':contentType});
                 res.write(content);
                 res.end();
-                console.log(`res 200:${file}`);
+                //console.log(`res 200:${file}`);
             }
         })
     },100)
