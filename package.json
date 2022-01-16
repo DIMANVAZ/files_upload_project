@@ -13,5 +13,8 @@
     "student"
   ],
   "author": "DIMANVAZ",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "sequelize": "^6.13.0"
+  }
 }
